@@ -1,11 +1,9 @@
+import 'package:demo_alternar_telas/cadastro/cadastro.dart';
+import 'package:demo_alternar_telas/reset/reset.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:liber_app/cadastro/cadastro.dart';
-import 'package:liber_app/reset/reset.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key});
-
   @override
   State<Login> createState() => _LoginState();
 }
@@ -66,94 +64,93 @@ class _LoginState extends State<Login> {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 32),
+            padding: const EdgeInsets.only(top: 32),
             child: Column(
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width/1.2,
+                  width: MediaQuery.of(context).size.width / 1.2,
                   height: 50,
-                  padding: EdgeInsets.only( top: 4, left: 16, right: 16) ,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black,
-                        blurRadius: 20
-                      )
-                    ]
-                  ),
-                  child:  TextField(
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.email,
-                      color: Colors.grey,),
-                        hintText: 'Email'
-
-                    ),),
-                ),
-
-                Container(
-                  margin: EdgeInsets.only(top: 32),
-                  width: MediaQuery.of(context).size.width/1.2,
-                  height: 50,
-                  padding: EdgeInsets.only( top: 4, left: 16, right: 16) ,
-                  decoration: BoxDecoration(
+                  padding: const EdgeInsets.only(top: 4, left: 16, right: 16),
+                  decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(50)),
                       boxShadow: [
-                        BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 20
-                        )
-                      ]
-                  ),
-                  child:  TextField(
+                        BoxShadow(color: Colors.black, blurRadius: 20)
+                      ]),
+                  child: const TextField(
                     decoration: InputDecoration(
-                        icon: Icon(Icons.security,
-                          color: Colors.grey,),
-                        hintText: 'Senha'
-
-                    ),),
-                ),
-                  SizedBox(
-                    height: 40,
+                        icon: Icon(
+                          Icons.email,
+                          color: Colors.grey,
+                        ),
+                        hintText: 'Email'),
                   ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 32),
+                  width: MediaQuery.of(context).size.width / 1.2,
+                  height: 50,
+                  padding: const EdgeInsets.only(top: 4, left: 16, right: 16),
+                  decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black, blurRadius: 20)
+                      ]),
+                  child: const TextField(
+                    decoration: InputDecoration(
+                        icon: Icon(
+                          Icons.security,
+                          color: Colors.grey,
+                        ),
+                        hintText: 'Senha'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
                 Align(
                   child: TextButton(
-                    child: Text('Esquecu seu e-mail ou senha ?', style: TextStyle(color: Colors.black),),
-                    onPressed: (){
-                      Navigator.push(
-                          context,
+                    child: const Text(
+                      'Esquecu seu e-mail ou senha ?',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onPressed: () {
+                      Navigator.push(context,
                           MaterialPageRoute(builder: (context) => Reset()));
                     },
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 Container(
                   height: 50,
-                  width: MediaQuery.of(context).size.width/1.2,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [Color(0xFFf45d27),
-                      Color(0xFFf5851f)
-                    ],
+                  width: MediaQuery.of(context).size.width / 1.2,
+                  decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFf45d27), Color(0xFFf5851f)],
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(50))),
+                  child: Center(
+                    child: Text(
+                      "Entrar".toUpperCase(),
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(50))
-
-
                   ),
-                  child: Center(child: Text("Entrar".toUpperCase(), style: TextStyle(color: Colors.white, fontWeight:  FontWeight.bold),),),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 Align(
                   child: TextButton(
-                    child: Text('Cadastra-se', style: TextStyle(color: Colors.black),),
-                    onPressed: (){
-                      Navigator.push(
-                          context,
+                    child: const Text(
+                      'Cadastra-se',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onPressed: () {
+                      Navigator.push(context,
                           MaterialPageRoute(builder: (context) => Cadastro()));
                     },
                   ),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
 
 class ListPage extends StatefulWidget {
   @override
@@ -56,7 +59,38 @@ class _ListPageState extends State<ListPage> {
       'tema': 'terror',
       'class': 'suspense'
     },
+    {
+      'nomeLivro': 'H.P. Lovecraft - Miskatonic Edition',
+      'imgLivro':
+      'https://darkside.vteximg.com.br/arquivos/ids/168103-519-519/95-hp-lovecraft-medo-classico-miskatonic-edition-1.jpg?v=636802549118500000',
+      'valorLivro': '35,90',
+      'distancia': 'Próximo de você',
+      'vendedor': 'Ana Banana',
+      'tema': 'terror',
+      'class': 'suspense'
+    },
+    {
+      'nomeLivro': 'H.P. Lovecraft - Miskatonic Edition',
+      'imgLivro':
+      'https://darkside.vteximg.com.br/arquivos/ids/168103-519-519/95-hp-lovecraft-medo-classico-miskatonic-edition-1.jpg?v=636802549118500000',
+      'valorLivro': '35,90',
+      'distancia': 'Próximo de você',
+      'vendedor': 'Ana Banana',
+      'tema': 'terror',
+      'class': 'suspense'
+    },
   ];
+  final controller = CarouselController();
+  int activeIndex = 0;
+  final urlImages = [
+    'https://imgs.extra.com.br/1519392636/1xg.jpg?imwidth=500',
+    'https://imgs.extra.com.br/1519392636/1xg.jpg?imwidth=500',
+    'https://darkside.vteximg.com.br/arquivos/ids/168103-519-519/95-hp-lovecraft-medo-classico-miskatonic-edition-1.jpg?v=636802549118500000'
+        'https://darkside.vteximg.com.br/arquivos/ids/168103-519-519/95-hp-lovecraft-medo-classico-miskatonic-edition-1.jpg?v=636802549118500000'
+    'https://imgs.extra.com.br/1519392636/1xg.jpg?imwidth=500',
+    'https://imgs.extra.com.br/1519392636/1xg.jpg?imwidth=500',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -69,25 +103,42 @@ class _ListPageState extends State<ListPage> {
             style: TextStyle(fontSize: 25),
           ),
         ),
-        Container(
-          height: 350,
-          width: MediaQuery.of(context).size.width - 25,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: Colors.blue,
-          ),
-          child: Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(
-                    left: 10, right: 10, top: 10, bottom: 10),
-                height: 200,
-                color: Colors.black,
-              ),
-              const Text("MARX, uma introdução"),
-              const Text("200,00")
-            ],
-          ),
+        CarouselSlider.builder(
+          carouselController: controller,
+            options: CarouselOptions(
+                height: 300,
+              initialPage: 0,
+              autoPlay: true,
+              reverse: false,
+              //enlargeCenterPage: true,
+              enlargeStrategy: CenterPageEnlargeStrategy.height,
+
+              autoPlayInterval: Duration(seconds: 2),
+              onPageChanged: (index, reason) =>
+                  setState(() => activeIndex = index)
+
+            ),
+            itemCount:  urlImages.length,
+            itemBuilder:  (context, index, realIndex) {
+              final urlImage = urlImages[index];
+
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                color: Colors.grey,
+                child: Image.network(
+                  urlImage,
+                  fit: BoxFit.cover,
+                ),
+              );
+            }),
+        const SizedBox(
+          height: 32,
+        ), buidIndicator(),
+
+
+
+        const SizedBox(
+          height: 100,
         ),
         SizedBox(
           height: 600,
@@ -240,5 +291,28 @@ class _ListPageState extends State<ListPage> {
         )
       ],
     );
+
+
+
   }
+  Widget buidIndicator() => AnimatedSmoothIndicator(
+    activeIndex: activeIndex,
+    count: urlImages.length,
+    onDotClicked: animeteToSlide,
+    effect: SlideEffect(
+      dotWidth: 20,
+      dotHeight: 20,
+    ),
+  );
+
+
+  void animeteToSlide(int index) => controller.animateToPage(index);
+
+  void next() => controller.nextPage(duration: Duration(milliseconds: 500));
+  void previous() => controller.previousPage(duration: Duration(milliseconds: 500));
+
 }
+
+
+
+

@@ -1,4 +1,5 @@
 import 'package:demo_alternar_telas/home/home.dart';
+import 'package:demo_alternar_telas/login/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,9 +11,9 @@ class LiberApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: DemoHome(),
+      home: Login(),
     );
   }
 }

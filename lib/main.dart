@@ -1,19 +1,17 @@
-import 'package:demo_alternar_telas/home/home.dart';
-import 'package:demo_alternar_telas/login/login.dart';
 import 'package:flutter/material.dart';
+import 'package:liber/services/file_service.dart';
+import 'package:liber/views/login.dart';
+import 'package:liber/views/subviews/ativar.dart';
+import 'package:liber/views/subviews/recuperar.dart';
 
-void main() {
-  runApp(const LiberApp());
-}
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-class LiberApp extends StatelessWidget {
-  const LiberApp({Key? key}) : super(key: key);
+  var register = await RegisterFileService.get();
+  var recover = await RecoverFileService.get();
 
-  @override
-  Widget build(BuildContext context) {
-    return  MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Login(),
-    );
-  }
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: register != null ? const Ativar() : recover != null ? const Recuperar() : const Login()
+  ));
 }

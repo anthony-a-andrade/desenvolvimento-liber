@@ -1,4 +1,4 @@
-package com.example.demo_alternar_telas
+package com.example.liber
 
 import io.flutter.embedding.android.FlutterActivity
 

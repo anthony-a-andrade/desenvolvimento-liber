@@ -1,0 +1,64 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:liber/model/dto/file_response_dto.dart';
+import 'package:path_provider/path_provider.dart';
+
+class RegisterFileService {
+  static Future<File> getFile() async {
+    final directory = await getApplicationDocumentsDirectory();
+    var path = "${directory.path}/register.json";
+    var file = File(path);
+    await file.create();
+    return file;
+  }
+
+  static Future<FileResponseDTO?> get() async {
+    try {
+      final file = await getFile();
+      String body_ = await file.readAsString();
+      dynamic body = json.decode(body_);
+      return FileResponseDTO.register(body);
+    } catch (e) { return null; }
+  }
+
+  static Future<File> save(String token, String email, String name) async {
+    String data = json.encode({ 'token': token, 'name': name, 'email': email });
+    final file = await getFile();
+    return file.writeAsString(data);
+  }
+
+  static Future<void> delete() async {
+    final file = await getFile();
+    await file.delete();
+  }
+}
+
+class RecoverFileService {
+  static Future<File> getFile() async {
+    final directory = await getApplicationDocumentsDirectory();
+    var path = "${directory.path}/recover.json";
+    var file = File(path);
+    await file.create();
+    return file;
+  }
+
+  static Future<FileResponseDTO?> get() async {
+    try {
+      final file = await getFile();
+      String body_ = await file.readAsString();
+      dynamic body = json.decode(body_);
+      return FileResponseDTO.recover(body);
+    } catch (e) { return null; }
+  }
+
+  static Future<File> save(String token, String email) async {
+    String data = json.encode({ 'token': token, 'email': email });
+    final file = await getFile();
+    return file.writeAsString(data);
+  }
+
+  static Future<void> delete() async {
+    final file = await getFile();
+    await file.delete();
+  }
+}

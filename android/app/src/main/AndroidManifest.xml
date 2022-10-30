@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.demo_alternar_telas">
+    package="com.example.liber">
    <application
-        android:label="demo_alternar_telas"
+        android:label="liber"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

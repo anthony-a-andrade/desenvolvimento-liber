@@ -1,6 +1,6 @@
 {
-    "name": "demo_alternar_telas",
-    "short_name": "demo_alternar_telas",
+    "name": "liber",
+    "short_name": "liber",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

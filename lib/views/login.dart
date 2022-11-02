@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:liber/model/dto/http_response_dto.dart';
+import 'package:liber/services/file_service.dart';
 import 'package:liber/services/user_service.dart';
 import 'package:liber/views/cadastro.dart';
+import 'package:liber/views/home.dart';
 import 'package:liber/views/recuperacao.dart';
 import 'package:liber/widgets/icon_text_field.dart';
 import 'package:liber/widgets/info/info_dialog.dart';
@@ -26,6 +28,8 @@ class _LoginState extends State<Login> {
     if (!mounted) return;
     if (response.status == 200) {
       Snackbar.show(context, "Bem vindo, ${response.name}!");
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const Home()));
+      await LoginFileService.save(email, senha);
     } else {
       InfoDialog.show(context, response.message!, Icons.error_outline, const Color.fromARGB(255, 255, 17, 0), 50);
     }

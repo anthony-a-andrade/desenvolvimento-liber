@@ -62,3 +62,33 @@ class RecoverFileService {
     await file.delete();
   }
 }
+
+class LoginFileService {
+  static Future<File> getFile() async {
+    final directory = await getApplicationDocumentsDirectory();
+    var path = "${directory.path}/login.json";
+    var file = File(path);
+    await file.create();
+    return file;
+  }
+
+  static Future<FileResponseDTO?> get() async {
+    try {
+      final file = await getFile();
+      String body_ = await file.readAsString();
+      dynamic body = json.decode(body_);
+      return FileResponseDTO.login(body);
+    } catch (e) { return null; }
+  }
+
+  static Future<File> save(String email, String password) async {
+    String data = json.encode({ 'email': email, 'password': password });
+    final file = await getFile();
+    return file.writeAsString(data);
+  }
+
+  static Future<void> delete() async {
+    final file = await getFile();
+    await file.delete();
+  }
+}

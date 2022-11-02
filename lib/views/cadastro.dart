@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:liber/model/dto/http_response_dto.dart';
 import 'package:liber/services/file_service.dart';

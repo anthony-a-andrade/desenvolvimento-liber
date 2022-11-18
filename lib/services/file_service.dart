@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:liber/model/dto/file_response_dto.dart';
+import 'package:liber/model/dto/file_response.dart';
 import 'package:path_provider/path_provider.dart';
 
 class RegisterFileService {
@@ -12,12 +12,12 @@ class RegisterFileService {
     return file;
   }
 
-  static Future<FileResponseDTO?> get() async {
+  static Future<FileResponse?> get() async {
     try {
       final file = await getFile();
       String body_ = await file.readAsString();
       dynamic body = json.decode(body_);
-      return FileResponseDTO.register(body);
+      return FileResponse.register(body);
     } catch (e) { return null; }
   }
 
@@ -42,12 +42,12 @@ class RecoverFileService {
     return file;
   }
 
-  static Future<FileResponseDTO?> get() async {
+  static Future<FileResponse?> get() async {
     try {
       final file = await getFile();
       String body_ = await file.readAsString();
       dynamic body = json.decode(body_);
-      return FileResponseDTO.recover(body);
+      return FileResponse.recover(body);
     } catch (e) { return null; }
   }
 
@@ -72,12 +72,12 @@ class LoginFileService {
     return file;
   }
 
-  static Future<FileResponseDTO?> get() async {
+  static Future<FileResponse?> get() async {
     try {
       final file = await getFile();
       String body_ = await file.readAsString();
       dynamic body = json.decode(body_);
-      return FileResponseDTO.login(body);
+      return FileResponse.login(body);
     } catch (e) { return null; }
   }
 

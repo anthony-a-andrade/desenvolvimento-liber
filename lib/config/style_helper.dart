@@ -4,20 +4,28 @@ class Style {
   static Color gradientColorFrom = const Color.fromRGBO(63, 131, 248, 1);
   static Color gradientColorTo = const Color.fromRGBO(6, 182, 212, 1);
   static Color gradientForeground = Colors.white;
+  static const Color highlightColor = Color(0xff3DD5E4);
+  static double scaffoldPadding = 24;
 
-  static TextStyle bold = const TextStyle(fontWeight: FontWeight.bold);
 
-  static TextStyle size(double size) => TextStyle(fontSize: size);
-  static TextStyle color(Color color) => TextStyle(color: color);
-}
-
-extension StyleExtensions on TextStyle {
-  TextStyle bold() => merge(const TextStyle(fontWeight: FontWeight.bold));
-  TextStyle italic() => merge(const TextStyle(fontStyle: FontStyle.italic));
-  TextStyle size(double size) => merge(TextStyle(fontSize: size));
-  TextStyle color(Color color) => merge(TextStyle(color: color));
-}
-
-extension ColorExtension on Color {
-  TextStyle bold() => TextStyle(color: this, fontWeight: FontWeight.bold);
+  static double width(BuildContext context) => MediaQuery.of(context).size.width;
+  static double height(BuildContext context) => MediaQuery.of(context).size.height;
+  
+  static BoxDecoration circularShadowBorder = const BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.all(Radius.circular(20)),
+    boxShadow: [ 
+      BoxShadow(color: Color.fromARGB(255, 217, 217, 217), blurRadius: 9), 
+      BoxShadow(color: Colors.transparent, blurRadius: 3) 
+    ]
+  );
+  
+  static BoxDecoration squaredShadowBorder = const BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.all(Radius.circular(5)),
+    boxShadow: [ 
+      BoxShadow(color: Color.fromARGB(255, 217, 217, 217), blurRadius: 9), 
+      BoxShadow(color: Colors.transparent, blurRadius: 3) 
+    ]
+  );
 }

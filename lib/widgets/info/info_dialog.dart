@@ -19,6 +19,10 @@ class InfoDialog {
     );
   }
 
+  static info(BuildContext context, String text) {
+    show(context, text, Icons.info_outline, Colors.black, 50);
+  }
+
   static error(BuildContext context, String text) {
     show(context, text, Icons.error_outline, const Color.fromARGB(255, 255, 17, 0), 50);
   }

@@ -1,39 +1,34 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:flutter/material.dart';
+import 'package:liber/config/font_helper.dart';
 import 'package:liber/config/style_helper.dart';
 
 class TopGradientPanel extends StatelessWidget {
-  IconData? icon;
-  double iconSize;
-  String text;
-  double size;
+  final IconData? icon;
+  final double iconSize;
+  final double fontSize;
+  final String text;
 
-  TopGradientPanel(this.text, this.icon, this.size, this.iconSize, {super.key});
+  const TopGradientPanel(this.text, this.icon, this.fontSize, this.iconSize, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 4,
+      width: Style.width(context),
+      height: Style.height(context) / 4,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [ Style.gradientColorFrom, Style.gradientColorTo ],
+          colors: [ Style.gradientColorFrom, Style.gradientColorTo ]
         ),
         borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(100))
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: iconSize,
-            color: Style.gradientForeground
-          ),
+          Icon(icon, size: iconSize, color: Style.gradientForeground),
           const SizedBox(height: 10),
-          Text(text, style: Style.color(Style.gradientForeground).size(size).bold())
+          Text(text, style: Font.color(Style.gradientForeground).size(fontSize).bold())
         ]
       )
     );

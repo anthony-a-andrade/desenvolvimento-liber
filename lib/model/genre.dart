@@ -15,6 +15,7 @@ class Genre {
   }
 
   static List<Genre> fromJsonList(dynamic json) {
-    return (json as List).map((genre) => Genre.fromJson(genre)).toList();
+    try { return (json as List).map((genre) => Genre.fromJson(genre)).toList(); } 
+    catch (e) { return []; }
   }
 }

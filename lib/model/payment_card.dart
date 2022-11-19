@@ -10,7 +10,7 @@ class PaymentCard {
 
   PaymentCard(this.id, this.number, this.expirationDate, this.cvv, this.cardholder, this.cpf, this.nameCard, this.main);
   PaymentCard.build({required this.id, required this.number, required this.expirationDate, required this.cvv, required this.cardholder, required this.cpf, required this.nameCard, required this.main});
-  PaymentCard.empty(this.id, [this.number = "", this.expirationDate = "", this.cvv = "", this.cardholder = "", this.cpf = "", this.nameCard = "", this.main = false]);
+  PaymentCard.empty([this.id = "", this.number = "", this.expirationDate = "", this.cvv = "", this.cardholder = "", this.cpf = "", this.nameCard = "", this.main = false]);
 
   static PaymentCard fromJson(dynamic json) {
     return PaymentCard.build(
@@ -26,7 +26,8 @@ class PaymentCard {
   }
 
   static List<PaymentCard> fromJsonList(dynamic json) {
-    return (json as List).map((paymentCard) => PaymentCard.fromJson(paymentCard)).toList();
+    try { return (json as List).map((paymentCard) => PaymentCard.fromJson(paymentCard)).toList(); } 
+    catch (e) { return []; }
   }
 
   @override

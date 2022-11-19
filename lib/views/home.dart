@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:liber/config/config.dart';
 import 'package:liber/config/style_helper.dart';
 import 'package:liber/model/ad.dart';
+import 'package:liber/model/dto/user_response.dart';
 import 'package:liber/model/enums/screen_index.dart';
 import 'package:liber/model/solicitation.dart';
 import 'package:liber/model/user.dart';
+import 'package:http/http.dart' as http;
 import 'package:liber/services/ad_service.dart';
 import 'package:liber/services/file_service.dart';
+import 'package:liber/services/solicitation_service.dart';
 import 'package:liber/services/user_service.dart';
 import 'package:liber/views/login.dart';
 import 'package:liber/views/subviews/books.dart';
@@ -18,12 +24,11 @@ import 'package:liber/widgets/input/rounded_icon_text_button.dart';
 import 'package:liber/widgets/input/squared_text_button.dart';
 
 class Home extends StatefulWidget {
-  final User account;
-  final List<Ad> publishedAds;
-  final List<Solicitation> trades;
-  final List<Solicitation> sells;
   static late void Function(ScreenIndex index) switchScreen;
-  const Home(this.account, this.publishedAds, this.trades, this.sells, {super.key});
+  
+  final String userEmail;
+  
+  const Home(this.userEmail, {super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -44,10 +49,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
       switch (index) {
         case ScreenIndex.books: screen = const Books(); break;
-        case ScreenIndex.editAccount: screen = EditAccount(widget.account); break;
-        case ScreenIndex.editAddressDetails: screen = EditAccountDetails(addresses: widget.account.address); break;
-        case ScreenIndex.editPaymentDetails: screen = EditAccountDetails(cards: widget.account.cards); break;
-        case ScreenIndex.library: screen = Library(widget.account, adsMade: AdService.randomAds(5), purchasesMade: AdService.randomAds(3)); break;
+        case ScreenIndex.editAccount: screen = EditAccount(widget.userEmail); break;
+        case ScreenIndex.editAddressDetails: screen = EditAccountDetails(widget.userEmail, editAddresses: true); break;
+        case ScreenIndex.editPaymentDetails: screen = EditAccountDetails(widget.userEmail, editCards: true); break;
+        case ScreenIndex.library: screen = Library(widget.userEmail, adsMade: AdService.randomAds(5), purchasesMade: AdService.randomAds(3)); break;
         case ScreenIndex.createAd: screen = const Text("not implemented"); break;
         case ScreenIndex.cart: screen = const Text("not implemented"); break;
         default:
@@ -91,95 +96,115 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     offset = Tween<Offset>(end: Offset.zero, begin: const Offset(-1.0, 0)).animate(controller);
   }
 
+  Future<dynamic> loadHome() async {
+    var uri = Uri.http(baseUrl, "/api/app_user/${widget.userEmail}");
+    var response = await http.get(uri);
+    var result = json.decode(response.body);
+
+    switch (response.statusCode) {
+      case 200: return result;
+      default: return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var account = widget.account;
-    var ads = widget.publishedAds;
-    var sells = widget.sells;
-    var trades = widget.trades;
-
-    return GestureDetector(
-      onHorizontalDragEnd: (DragEndDetails drag) {
-        if(drag.primaryVelocity == null) { return; } 
-        else if(drag.primaryVelocity! < 0 && menuVisible) { menuVisibility(); } 
-        else if(drag.primaryVelocity! > 0 && !menuVisible) { menuVisibility(); }
-      },
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [ Style.gradientColorFrom, Style.gradientColorTo ])
-            ),
-            child: Scaffold(
-              backgroundColor: Colors.transparent,
-              resizeToAvoidBottomInset: false,
-              body: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(children: [
-                  Expanded(child: screen),
-                  const SizedBox(height: 5),
-                  RedirectPanel(current: index)
-                ])
-              )
-            )
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            child: SlideTransition(
-              position: offset,
-              child: Row(
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      border: Border(right: BorderSide(width: 1, color: Colors.black))
-                    ),
-                    width: Style.width(context) * 0.75,
-                    height: Style.height(context),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 10),
-                        AccountDetailsCard(
-                          account: account,
-                          publishedAds: ads,
-                          sells: sells,
-                          trades: trades,
-                        ),
-                        const SizedBox(height: 40),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20),
-                          child: Column(
-                            children: [
-                              RoundedIconTextButton("Editar conta", Icons.edit, () => switchScreen(ScreenIndex.editAccount), 15),
-                              RoundedIconTextButton("Cadastrar anúncio", Icons.add, () => switchScreen(ScreenIndex.createAd), 15),
-                              RoundedIconTextButton("Carrinho", Icons.shopping_cart, () => switchScreen(ScreenIndex.cart), 15),
-                              RoundedIconTextButton("Biblioteca", Icons.layers, () => switchScreen(ScreenIndex.library), 15),
-                            ]
-                          ),
-                        ),
-                        Expanded(child: Container()),
-                        SquaredTextButton("SAIR", logout, icon: Icons.logout),
-                        const SizedBox(height: 15)
-                      ]
-                    )   
+    return FutureBuilder(
+      future: get(widget.userEmail),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          var account = User.fromJson(snapshot.data);
+          var ads = AdService.randomAds(5);//snapshot.data!.publishedAds!;
+          var sells = [SolicitationService.randomSolicitation()];//snapshot.data!.sells!;
+          var trades = [SolicitationService.randomSolicitation()];//snapshot.data!.trades!;
+          
+          return GestureDetector(
+            onHorizontalDragEnd: (DragEndDetails drag) {
+              if(drag.primaryVelocity == null) { return; } 
+              else if(drag.primaryVelocity! < 0 && menuVisible) { menuVisibility(); } 
+              else if(drag.primaryVelocity! > 0 && !menuVisible) { menuVisibility(); }
+            },
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [ Style.gradientColorFrom, Style.gradientColorTo ])
                   ),
-                  GestureDetector(
-                    onTap: menuVisibility,
-                    child: Container(
-                      color: Colors.transparent,
-                      width: Style.width(context) * 0.25,
-                      height: Style.height(context)
+                  child: Scaffold(
+                    backgroundColor: Colors.transparent,
+                    resizeToAvoidBottomInset: false,
+                    body: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(children: [
+                        Expanded(child: screen),
+                        const SizedBox(height: 5),
+                        RedirectPanel(current: index)
+                      ])
                     )
                   )
-                ]
-              )
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: SlideTransition(
+                    position: offset,
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            border: Border(right: BorderSide(width: 1, color: Colors.black))
+                          ),
+                          width: Style.width(context) * 0.75,
+                          height: Style.height(context),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 10),
+                              AccountDetailsCard(
+                                account: account,
+                                publishedAds: ads,
+                                sells: sells,
+                                trades: trades,
+                              ),
+                              const SizedBox(height: 40),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 20),
+                                child: Column(
+                                  children: [
+                                    RoundedIconTextButton("Editar conta", Icons.edit, () => switchScreen(ScreenIndex.editAccount), 15),
+                                    RoundedIconTextButton("Cadastrar anúncio", Icons.add, () => switchScreen(ScreenIndex.createAd), 15),
+                                    RoundedIconTextButton("Carrinho", Icons.shopping_cart, () => switchScreen(ScreenIndex.cart), 15),
+                                    RoundedIconTextButton("Biblioteca", Icons.layers, () => switchScreen(ScreenIndex.library), 15),
+                                  ]
+                                ),
+                              ),
+                              Expanded(child: Container()),
+                              SquaredTextButton("SAIR", logout, icon: Icons.logout),
+                              const SizedBox(height: 15)
+                            ]
+                          )   
+                        ),
+                        GestureDetector(
+                          onTap: menuVisibility,
+                          child: Container(
+                            color: Colors.transparent,
+                            width: Style.width(context) * 0.25,
+                            height: Style.height(context)
+                          )
+                        )
+                      ]
+                    )
+                  )
+                )
+              ]
             )
-          )
-        ]
-      )
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      }
     );
   }
 }

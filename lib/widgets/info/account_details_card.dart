@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:liber/config/config.dart';
 import 'package:liber/config/font_helper.dart';
 import 'package:liber/model/ad.dart';
 import 'package:liber/model/solicitation.dart';
@@ -36,7 +37,7 @@ class AccountDetailsCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
                     image: DecorationImage(
-                      image: NetworkImage(account.url),
+                      image: NetworkImage(account.getImage()),
                       fit: BoxFit.fitWidth
                     )
                   )

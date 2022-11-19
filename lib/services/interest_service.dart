@@ -1,23 +1,35 @@
+import 'dart:convert';
 import 'dart:math';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
+import 'package:liber/config/config.dart';
 
 class InterestService {
   static final _random = Random();
 
-  static String _randomWord(int min, int max) {
-    String alfa = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", palavra = "";
-    var tamanho = min + _random.nextInt(max - min);
-    for (var i = 0; i < tamanho; i++) { palavra += alfa[_random.nextInt(26)]; }
-    return palavra;
+  static Future getAllGenres() async {
+    var uri = Uri.http(baseUrl, "/api/app_genre/");
+      
+    var response = await http.get(uri, 
+      headers: { "Content-Type": "application/json" }
+    );
+
+    var result = json.decode(response.body);
+    return result;
   }
 
-  static Future<Iterable<MapEntry<String, Color>>> expand(int qntExpand) {
-    Map<String, Color> items = {};
+  static Future<Iterable<MapEntry<String, dynamic>>> expand() async {
+    Map<String, dynamic> items = {};
+    var words = await getAllGenres();
+    var qntExpand = (words as List).length;
     for (int i = 0; i < qntExpand; i++) {
-      String palavra = [_randomWord(5, 10), _randomWord(5, 10)].join(" ");
+      String palavra = words[i]['name'];
       Color cor = Color.fromRGBO(50 + _random.nextInt(206), 50 + _random.nextInt(206), 100 + _random.nextInt(156), 1);
-      items[palavra] = cor;
+      
+      String id = words[i]['_id'];
+      items[id] = { 'palavra': palavra, 'cor': cor };
+
     }
     return Future.value(items.entries);
   }

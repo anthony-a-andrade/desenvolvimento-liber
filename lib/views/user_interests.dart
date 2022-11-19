@@ -1,12 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:liber/config/config.dart';
 import 'package:liber/config/font_helper.dart';
 import 'package:liber/config/style_helper.dart';
 import 'package:liber/services/interest_service.dart';
+import 'package:liber/views/home.dart';
 import 'package:liber/widgets/control/selectable_word.dart';
 import 'package:liber/widgets/input/squared_text_button.dart';
+import 'package:http/http.dart' as http;
 
 class UserInterests extends StatefulWidget {
-  const UserInterests({super.key});
+  final String email;
+  const UserInterests(this.email, {super.key});
 
   @override
   State<UserInterests> createState() => _UserInterestsState();
@@ -14,7 +20,7 @@ class UserInterests extends StatefulWidget {
 
 class _UserInterestsState extends State<UserInterests> {
   bool enabled = false;
-  var palavras = <String, Color>{};
+  var palavras = <String, dynamic>{};
   var selecionadas = <String>{};
   
   @override
@@ -24,8 +30,24 @@ class _UserInterestsState extends State<UserInterests> {
   }
 
   expand() async {
-    var entries = await InterestService.expand(8);
+    var entries = await InterestService.expand();
     setState(() => palavras.addEntries(entries));
+  }
+
+  saveGenres() async {
+    var uri = Uri.http(baseUrl, "/api/app_user/");
+    var body = json.encode({ 'email': widget.email, 'genres': selecionadas.toList() });
+    
+    var response = await http.put(uri, 
+      body: body,
+      headers: { "Content-Type": "application/json" }
+    );
+
+    int status = response.statusCode;
+    if (status == 200) {
+      if (!mounted) return;
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Home(widget.email)));
+    }
   }
 
   select(String palavra) {
@@ -38,7 +60,7 @@ class _UserInterestsState extends State<UserInterests> {
 
   @override
   Widget build(BuildContext context) {
-    var palavras = this.palavras.entries.toList();
+    var keys = palavras.keys.toList();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -55,15 +77,15 @@ class _UserInterestsState extends State<UserInterests> {
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Column(
-                  children: List<int>.generate(palavras.length ~/ 2, (index) => index * 2).map((pos) {
+                  children: List<int>.generate(keys.length ~/ 2, (index) => index * 2).map((pos) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 14),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          SelectableWord(palavras[pos], selecionadas.contains(palavras[pos].key), select),
+                          SelectableWord(keys[pos], palavras[keys[pos]], selecionadas.contains(keys[pos]), select),
                           const SizedBox(width: 15),
-                          SelectableWord(palavras[pos + 1], selecionadas.contains(palavras[pos + 1].key), select)
+                          SelectableWord(keys[pos + 1], palavras[keys[pos + 1]], selecionadas.contains(keys[pos + 1]), select)
                         ]
                       )
                     );
@@ -74,7 +96,7 @@ class _UserInterestsState extends State<UserInterests> {
             const SizedBox(height: 30),
             SquaredTextButton("CARREGAR MAIS", expand),
             const SizedBox(height: 15),
-            SquaredTextButton("CONTINUAR", () { }, background: Colors.white, foreground: Style.highlightColor, enabled: enabled)
+            SquaredTextButton("CONTINUAR", saveGenres, background: Colors.white, foreground: Style.highlightColor, enabled: enabled)
           ]
         )
       )

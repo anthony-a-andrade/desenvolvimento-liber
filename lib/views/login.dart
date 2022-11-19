@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:liber/config/style_helper.dart';
 import 'package:liber/model/dto/user_response.dart';
+import 'package:liber/model/user.dart';
 import 'package:liber/services/file_service.dart';
 import 'package:liber/services/user_service.dart';
 import 'package:liber/views/forgot_password.dart';
@@ -23,24 +24,24 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   void login() async {
-    String email = emailController.text;
-    String senha = passwordController.text;
+    String email = "gamestthony@gmail.com";//emailController.text;
+    String senha = "123";//passwordController.text;
 
     UserResponse response = await UserService.login(email, senha);
     if (!mounted) return;
     if (response.status == 200) {
-      var user = response.user!;
-      Snackbar.show(context, "Bem vindo de volta, ${response.name}!");
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home(user, [], [], [])));
-      await LoginFileService.save(email, senha);
-      // if (user.genres.isEmpty) {
-      //   Snackbar.show(context, "Bem vindo ao Liber, ${response.name}!");
-      //   Navigator.push(context, MaterialPageRoute(builder: (context) => const UserInterests()));
-      // } else {
-      //   Snackbar.show(context, "Bem vindo de volta, ${response.name}!");
-      //   Navigator.push(context, MaterialPageRoute(builder: (context) => Home(user, [], [], [])));
-      //   await LoginFileService.save(email, senha);
-      // }
+      User user = response.user!;
+      // Snackbar.show(context, "Bem vindo de volta, ${response.name}!");
+      // Navigator.push(context, MaterialPageRoute(builder: (context) => Home(user, [], [], [])));
+      // await LoginFileService.save(email, senha);
+      if (user.genres.isEmpty) {
+        Snackbar.show(context, "Bem vindo ao Liber, ${response.name}!");
+        Navigator.push(context, MaterialPageRoute(builder: (context) => UserInterests(user.email)));
+      } else {
+        Snackbar.show(context, "Bem vindo de volta, ${response.name}!");
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Home(user.email)));
+        await LoginFileService.save(email, senha);
+      }
     } else {
       InfoDialog.error(context, response.message!);
     }

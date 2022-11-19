@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
+import 'package:liber/config/config.dart';
 import 'package:liber/model/ad.dart';
 import 'package:liber/model/address.dart';
 import 'package:liber/model/dto/user_response.dart';
@@ -13,8 +14,6 @@ import 'package:liber/services/ad_service.dart';
 import 'package:liber/services/solicitation_service.dart';
 
 class UserService {
-  static String baseUrl = "192.168.0.107:3000";
-
   static Future<UserResponse> register(String name, String email, String password, String confirmPass) async {
     var uri = Uri.http(baseUrl, "/api/app_user");
     
@@ -57,10 +56,11 @@ class UserService {
     );
 
     var result = json.decode(response.body);
+    
     return UserResponse.login(result["name"], result["message"], User.fromJson(result["user"]), response.statusCode);
   }
 
-  static Future<UserResponse> get(String email) async {
+  static Future<UserResponse> get_(String email) async {
     // return UserResponse.get(
     //   User.build(
     //     id: "1", 
@@ -111,7 +111,6 @@ class UserService {
     var response = await http.get(uri);
     var result = json.decode(response.body);
 
-    print(result);
     switch (response.statusCode) {
       case 200: return UserResponse.get(User.fromJson(result), [], [], [], 200);
       default: return UserResponse.error(result["message"], response.statusCode);
@@ -175,5 +174,16 @@ class UserService {
       address: [ Address("", "", "", "", "", "", "", "", true) ], 
       cards: [ PaymentCard("", "", "", "", "", "", "", true) ]
     );
+  }
+}
+
+Future<dynamic> get(String email) async {
+  var uri = Uri.http(baseUrl, "/api/app_user/$email");
+  var response = await http.get(uri);
+  var result = json.decode(response.body);
+
+  switch (response.statusCode) {
+    case 200: return result;
+    default: return null;
   }
 }

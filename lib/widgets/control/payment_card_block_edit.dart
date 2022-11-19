@@ -6,14 +6,14 @@ import 'package:liber/widgets/input/rounded_text_field.dart';
 
 class PaymentCardBlockEdit extends StatefulWidget {
   final int index;
-  final String mainCard;
+  final int selectedCard;
   final PaymentCard paymentCard;
-  final void Function(String index) select;
-  final void Function(String index) delete;
+  final void Function(int index) select;
+  final void Function(int index) delete;
 
   const PaymentCardBlockEdit({
     required this.index,
-    required this.mainCard,
+    required this.selectedCard,
     required this.paymentCard, 
     required this.select, 
     required this.delete,
@@ -55,7 +55,7 @@ class _PaymentCardBlockEditState extends State<PaymentCardBlockEdit> {
                 Text("Cartão ${widget.index + 1}", style: Font.size(18).bold()),
                 Expanded(child: Container()),
                 TextButton(
-                  onPressed: () => widget.delete(widget.paymentCard.id), 
+                  onPressed: () => widget.delete(widget.index), 
                   style: ButtonStyle(alignment: Alignment.centerRight, padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero)),
                   child: const Icon(Icons.delete_outline_sharp, color: Colors.red)
                 )
@@ -67,10 +67,10 @@ class _PaymentCardBlockEditState extends State<PaymentCardBlockEdit> {
                 Expanded(child: RoundedTextField(widget.paymentCard.nameCard, "Nome", nomeController)),
                 const SizedBox(width: 15),
                 const Text("Principal: "),
-                Radio<String>(
-                  value: widget.paymentCard.id, 
-                  groupValue: widget.mainCard, 
-                  onChanged: (index) => widget.select(widget.paymentCard.id)
+                Radio<int>(
+                  value: widget.index, 
+                  groupValue: widget.selectedCard, 
+                  onChanged: (index) => widget.select(widget.index)
                 )
               ]
             ),

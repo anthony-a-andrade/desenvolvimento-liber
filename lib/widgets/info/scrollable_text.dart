@@ -42,7 +42,7 @@ class _ScrollableTextState extends State<ScrollableText> with TickerProviderStat
   @override
   void initState() {
     super.initState();
-    _scroll();
+    // _scroll();
   }
   
   @override

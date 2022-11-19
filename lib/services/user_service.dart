@@ -60,63 +60,6 @@ class UserService {
     return UserResponse.login(result["name"], result["message"], User.fromJson(result["user"]), response.statusCode);
   }
 
-  static Future<UserResponse> get_(String email) async {
-    // return UserResponse.get(
-    //   User.build(
-    //     id: "1", 
-    //     name: "Usuário Teste", 
-    //     email: "teste@gmail.com", 
-    //     password: "senhateste", 
-    //     verified: true, 
-    //     activated: true, 
-    //     accountType: AccountType.premium, 
-    //     genres: [
-    //       Genre.build(id: "1", name: "Terror", tag: "terror"),
-    //       Genre.build(id: "2", name: "Comédia", tag: "comedia"),
-    //       Genre.build(id: "3", name: "Fotografia", tag: "fotografia"),
-    //       Genre.build(id: "4", name: "Arquitetura", tag: "arquitetura")
-    //     ], 
-    //     address: [
-    //       Address.build(
-    //         id: "1", 
-    //         name: "Casa", 
-    //         cep: "00000-000", 
-    //         road: "Rua Teste", 
-    //         city: "Cidade Teste", 
-    //         state: "SP", 
-    //         number: "147", 
-    //         complement: "Casa 1", 
-    //         main: true
-    //       )
-    //     ], 
-    //     cards: [
-    //       PaymentCard.build(
-    //         id: "1", 
-    //         number: "0000111122223333", 
-    //         expirationDate: "00/0000", 
-    //         cvv: "123", 
-    //         cardholder: "Usuário Teste", 
-    //         cpf: "000.000.000-00", 
-    //         nameCard: "Cartão Visa", 
-    //         main: true
-    //       )
-    //     ]
-    //   ),
-    //   <Ad>[ AdService.randomAd(), AdService.randomAd(), AdService.randomAd() ], 
-    //   <Solicitation>[ SolicitationService.randomSolicitation(), SolicitationService.randomSolicitation() ], 
-    //   <Solicitation>[ SolicitationService.randomSolicitation() ], 
-    //   200
-    // );
-    var uri = Uri.http(baseUrl, "/api/app_user/$email");
-    var response = await http.get(uri);
-    var result = json.decode(response.body);
-
-    switch (response.statusCode) {
-      case 200: return UserResponse.get(User.fromJson(result), [], [], [], 200);
-      default: return UserResponse.error(result["message"], response.statusCode);
-    }
-  }
-
   static Future<UserResponse> forgotPassword(String email) async { 
     return UserResponse.forgotPassword("token", "message", 201);
 
@@ -171,8 +114,8 @@ class UserService {
       activated: true, 
       accountType: "standard", 
       genres: [Genre("1", "Terror", "terror")], 
-      address: [ Address("", "", "", "", "", "", "", "", true) ], 
-      cards: [ PaymentCard("", "", "", "", "", "", "", true) ]
+      address: Address("", "", "", "", "", "", "", "", true), 
+      card: PaymentCard("", "", "", "", "", "", "", true)
     );
   }
 }
@@ -181,7 +124,6 @@ Future<dynamic> get(String email) async {
   var uri = Uri.http(baseUrl, "/api/app_user/$email");
   var response = await http.get(uri);
   var result = json.decode(response.body);
-
   switch (response.statusCode) {
     case 200: return result;
     default: return null;

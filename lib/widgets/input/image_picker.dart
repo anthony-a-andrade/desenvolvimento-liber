@@ -36,12 +36,8 @@ class _ImagePickerState extends State<ImagePicker> {
   }
 
   Widget buildImage() {
-    if (ImagePicker.selectedFile != null) {
-      return Image.file(ImagePicker.selectedFile!, height: 250, fit: BoxFit.fitHeight);
-    } else {
-      print("${widget.image}");
-      return Image.network(widget.image ?? url, height: 250, fit: BoxFit.fitHeight);
-    } 
+    if (ImagePicker.selectedFile != null) { return Image.file(ImagePicker.selectedFile!, height: 250, fit: BoxFit.fitHeight); } 
+    else { return Image.network(widget.image ?? url, height: 250, fit: BoxFit.fitHeight); } 
   }
 
   @override

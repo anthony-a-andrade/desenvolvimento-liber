@@ -96,28 +96,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     offset = Tween<Offset>(end: Offset.zero, begin: const Offset(-1.0, 0)).animate(controller);
   }
 
-  Future<dynamic> loadHome() async {
-    var uri = Uri.http(baseUrl, "/api/app_user/${widget.userEmail}");
-    var response = await http.get(uri);
-    var result = json.decode(response.body);
-
-    switch (response.statusCode) {
-      case 200: return result;
-      default: return null;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: get(widget.userEmail),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.done) {
           var account = User.fromJson(snapshot.data);
           var ads = AdService.randomAds(5);//snapshot.data!.publishedAds!;
           var sells = [SolicitationService.randomSolicitation()];//snapshot.data!.sells!;
           var trades = [SolicitationService.randomSolicitation()];//snapshot.data!.trades!;
-          
           return GestureDetector(
             onHorizontalDragEnd: (DragEndDetails drag) {
               if(drag.primaryVelocity == null) { return; } 

@@ -39,7 +39,7 @@ class _RegisterState extends State<Register> {
     File? file = ImagePicker.selectedFile;
     if (file != null) {
       var email_ = email.characters.where((c) => "abcdefghijklmnopqrstuvwxyz0123456789".contains(c.toLowerCase())).join(" ");
-      await ImageService.saveImage(file, email_);
+      await ImageService.saveUser(file, email_);
     }
     
     UserResponse response = await UserService.register(name, email, senha, confirmarSenha);

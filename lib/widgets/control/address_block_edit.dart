@@ -7,7 +7,7 @@ import 'package:liber/widgets/input/squared_text_button.dart';
 
 class AddressBlockEdit extends StatefulWidget {
   final int index;
-  final int selectedAddress;
+  final int? selectedAddress;
   final Address address;
   final void Function(int index) select;
   final void Function(int index) delete;
@@ -37,7 +37,7 @@ class _AddressBlockEditState extends State<AddressBlockEdit> {
 
   save() {
     var address = Address.build(
-      id: "",
+      id: widget.address.id,
       name: nomeController.text, 
       cep: cepController.text, 
       road: ruaController.text, 

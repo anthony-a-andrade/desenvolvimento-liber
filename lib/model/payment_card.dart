@@ -10,23 +10,27 @@ class PaymentCard {
 
   PaymentCard(this.id, this.number, this.expirationDate, this.cvv, this.cardholder, this.cpf, this.nameCard, this.main);
   PaymentCard.build({required this.id, required this.number, required this.expirationDate, required this.cvv, required this.cardholder, required this.cpf, required this.nameCard, required this.main});
-  PaymentCard.empty([this.id = "", this.number = "", this.expirationDate = "", this.cvv = "", this.cardholder = "", this.cpf = "", this.nameCard = "", this.main = false]);
+  PaymentCard.empty({this.id = "", this.number = "", this.expirationDate = "", this.cvv = "", this.cardholder = "", this.cpf = "", this.nameCard = "", this.main = false});
 
-  static PaymentCard fromJson(dynamic json) {
-    return PaymentCard.build(
-      id: json["_id"], 
-      number: json["number"], 
-      expirationDate: json["expiration_date"], 
-      cvv: json["cvv"], 
-      cardholder: json["cardholder"], 
-      cpf: json["cpf"], 
-      nameCard: json["name_card"], 
-      main: json["main"]
-    );
+  static PaymentCard? fromJson(dynamic json) {
+    try {
+      return PaymentCard.build(
+        id: json["_id"], 
+        number: json["number"] ?? "", 
+        expirationDate: json["expiration_date"] ?? "", 
+        cvv: json["cvv"] ?? "", 
+        cardholder: json["cardholder"] ?? "", 
+        cpf: json["cpf"] ?? "", 
+        nameCard: json["name_card"] ?? "", 
+        main: json["main"]
+      );
+    } catch (e) {
+      return null;
+    }
   }
 
-  static List<PaymentCard> fromJsonList(dynamic json) {
-    try { return (json as List).map((paymentCard) => PaymentCard.fromJson(paymentCard)).toList(); } 
+  static List<PaymentCard?> fromJsonList(dynamic json) {
+    try { return ((json as List)[0]["cards"] as List).map((paymentCard) => PaymentCard.fromJson(paymentCard)).toList(); } 
     catch (e) { return []; }
   }
 
@@ -50,5 +54,20 @@ class PaymentCard {
       nameCard: source.nameCard, 
       main: source.main
     );
+  }
+
+
+  Map toJson(String email) {
+    return {
+      '_id': id,
+      'email': email,
+      'number': number,
+      'expiration_date': expirationDate,
+      'cvv': cvv,
+      'cardholder': cardholder,
+      'cpf': cpf,
+      'name_card': nameCard,
+      'main': main
+    };
   }
 }

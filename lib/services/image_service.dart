@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:liber/config/config.dart';
-import 'package:path_provider/path_provider.dart';
 
 class ImageService {
   static Future<bool> saveImage(File file, String name) async {
@@ -15,15 +13,14 @@ class ImageService {
     );
     return response.statusCode == 200 ? true : false;
   }
-
-  static Future<File> getImage(String name) async {
-    var uri = Uri.http(baseUrl, "/images/$name.jpeg");
-    var response = await http.get(uri);
-    
-    var buffer = response.bodyBytes.buffer;
-    var byteData = ByteData.view(buffer);
-    var tempDir = await getTemporaryDirectory();
-    return await File('${tempDir.path}/img')
-      .writeAsBytes(buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+  
+  static Future<bool> saveUser(File file, String email) async {
+    var uri = Uri.http(baseUrl, "/user/$email");
+    var body = json.encode({ 'image': file.readAsBytesSync() });
+    var response = await http.post(uri, 
+      body: body,
+      headers: { "Content-Type": "application/json" }
+    );
+    return response.statusCode == 200 ? true : false;
   }
 }

@@ -13,11 +13,11 @@ class User {
   bool activated;
   String accountType;
   List<Genre> genres;
-  List<Address> address;
-  List<PaymentCard> cards;
+  Address? address;
+  PaymentCard? card;
 
-  User(this.id, this.name, this.email, this.password, this.verified, this.activated, this.accountType, this.genres, this.address, this.cards);
-  User.build({required this.id, required this.name, required this.email, required this.password, required this.verified, required this.activated, required this.accountType, required this.genres, required this.address, required this.cards});
+  User(this.id, this.name, this.email, this.password, this.verified, this.activated, this.accountType, this.genres, this.address, this.card);
+  User.build({required this.id, required this.name, required this.email, required this.password, required this.verified, required this.activated, required this.accountType, required this.genres, required this.address, required this.card});
 
   static User fromJson(dynamic json) {
     return User.build(
@@ -29,8 +29,8 @@ class User {
       activated: json["activated"], 
       accountType: json["account_type"], 
       genres: Genre.fromJsonList(json["genres"]), 
-      address: Address.fromJsonList(json["address"]), 
-      cards: PaymentCard.fromJsonList(json["cards"])
+      address: Address.fromJson(json["address"]), 
+      card: PaymentCard.fromJson(json["cards"])
     );
   }
 

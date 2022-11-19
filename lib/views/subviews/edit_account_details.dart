@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:liber/config/style_helper.dart';
-import 'package:liber/main.dart';
 import 'package:liber/model/address.dart';
 import 'package:liber/model/payment_card.dart';
-import 'package:liber/services/user/address_service.dart';
-import 'package:liber/services/user/card_service.dart';
+import 'package:liber/services/user/address_service.dart' as address_service;
+import 'package:liber/services/user/card_service.dart' as card_service;
 import 'package:liber/views/subviews/edit_account.dart';
 import 'package:liber/widgets/control/address_block_edit.dart';
 import 'package:liber/widgets/control/payment_card_block_edit.dart';
@@ -18,89 +16,92 @@ class EditAccountDetails extends StatefulWidget {
   final bool editCards;
   const EditAccountDetails(this.userEmail, {this.editAddresses = false, this.editCards = false, super.key});
 
+
   @override
   State<EditAccountDetails> createState() => _EditAccountDetailsState();
 }
 
 class _EditAccountDetailsState extends State<EditAccountDetails> {
-  late int mainIndex;
-  List<Address>? addresses;
-  List<PaymentCard>? cards;
-  bool createCall = false;
+  int? mainIndex;
+  late List<Address?> addresses;
+  late List<PaymentCard?> cards;
+  
+  selectAddress(int index) async {
+    var old = addresses.where((a) => a!.main);
+    if (old.isNotEmpty) {
+      var first = old.first!;
+      first.main = false;
+      await address_service.save(widget.userEmail, first, true);
+    }
 
-  selectAddress(int index) {
-    setState(() {
-      var old = addresses!.where((a) => a.main);
-      if (old.isNotEmpty) old.first.main = false;
-
-      addresses![index].main = true;
-      mainIndex = index;
-    });
+    addresses[index]!.main = true;
+    await address_service.save(widget.userEmail, addresses[index]!, true);
+    
+    setState(() => mainIndex = index);
   }
 
-  selectCard(int index) {
-    setState(() {
-      var old = cards!.where((a) => a.main);
-      if (old.isNotEmpty) old.first.main = false;
+  selectCard(int index) async {
+    var old = cards.where((a) => a!.main);
+    if (old.isNotEmpty) {
+      var first = old.first!;
+      first.main = false;
+      await card_service.save(widget.userEmail, first, true);
+    }
 
-      cards![index].main = true;
-      mainIndex = index;
-    });
+    cards[index]!.main = true;
+    await card_service.save(widget.userEmail, cards[index]!, true);
+    
+    setState(() => mainIndex = index);
   }
 
   deleteAddress(int index) async {
-    if (addresses!.length == 1) { Snackbar.show(context, "É necessário ao menos um endereço!"); } 
+    if (addresses.length == 1) { Snackbar.show(context, "É necessário ao menos um endereço!"); } 
     else {
-      var address = addresses![index];
+      var address = addresses[index];
       var status = true;
 
-      if (address.id != "") status = await AddressService.delete(address.id);
-      if (status) setState(() => addresses!.removeAt(index));
+      if (address!.id != "") status = await address_service.delete(address.id);
+      if (status) setState(() => addresses.removeAt(index));
     }
   }
 
   deleteCard(int index) async {
-    var card = cards![index];
+    var card = cards[index];
     var status = true;
     
-    if (card.id != "") status = await CardService.delete(card.id);
-    if (status) setState(() => cards!.removeAt(index));
+    if (card!.id != "") status = await card_service.delete(card.id);
+    if (status) setState(() => cards.removeAt(index));
   }
 
-  saveAddress(Address address) async => await AddressService.save(widget.userEmail, address);
+  saveAddress(Address address) async => await address_service.save(widget.userEmail, address, true);
+  saveCard(PaymentCard card) async => await card_service.save(widget.userEmail, card, true);
   
-  create() => setState(() => createCall = true);
-  getItems() async {
-    if (widget.editAddresses) {
-      addresses = await AddressService.getAll(widget.userEmail);
-      print(addresses);
-      if (createCall) addresses!.add(Address.empty());
-      mainIndex = addresses!.indexWhere((i) => i.main);
-      return addresses!;
+  create() async {
+    if (widget.editAddresses) { 
+      await address_service.save(widget.userEmail, Address.empty(main: addresses.isEmpty), false);
+    } else if (widget.editCards) { 
+      await card_service.save(widget.userEmail, PaymentCard.empty(main: cards.isEmpty), false);
     }
 
-    if (widget.editCards) {
-      cards = await CardService.getAll(widget.userEmail);
-      print(cards);
-      if (createCall) cards!.add(PaymentCard.empty());
-      mainIndex = cards!.indexWhere((i) => i.main);
-      return cards!;
-    }
-
-    createCall = false;
-    return [];
+    setState(() { });
   }
 
   TextEditingController searchController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getItems(),
+      future: widget.editAddresses ? address_service.getAll(widget.userEmail) : card_service.getAll(widget.userEmail),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          var list = widget.editAddresses ? addresses! : cards!;
+        if (snapshot.connectionState == ConnectionState.done) {
+          var data = snapshot.data!;
+          var list = widget.editAddresses ? Address.fromJsonList(data) : PaymentCard.fromJsonList(data);
+          list.sort((dynamic a, b) => a.main ? 0 : 1);
+
+          if (widget.editAddresses) { addresses = list as List<Address?>; mainIndex = addresses.indexWhere((e) => e!.main); }
+          else { cards = list as List<PaymentCard?>; mainIndex = cards.indexWhere((e) => e!.main); }
+
+          mainIndex ??= 0;
 
           return Column(
             children: [
@@ -134,12 +135,11 @@ class _EditAccountDetailsState extends State<EditAccountDetails> {
                                 selectedCard: mainIndex,
                                 select: selectCard,
                                 delete: deleteCard,
-                                // save: saveCard
+                                save: saveCard
                               ); 
                             }
                           })
                         ),
-                        // SquaredTextButton("SALVAR ALTERAÇÕES", save, background: Colors.white, foreground: Style.highlightColor),
                         const SizedBox(height: 15),
                         SquaredTextButton("ADICIONAR ${widget.editAddresses ? 'ENDEREÇO' : 'CARTÃO'}", () => create()),
                         const SizedBox(height: 15)

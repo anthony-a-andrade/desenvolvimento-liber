@@ -11,24 +11,28 @@ class Address {
 
   Address(this.id, this.name, this.cep, this.road, this.city, this.state, this.number, this.complement, this.main);
   Address.build({required this.id, required this.name, required this.cep, required this.road, required this.city, required this.state, required this.number, required this.complement, required this.main});
-  Address.empty([this.id = "", this.name = "", this.cep = "", this.road = "", this.city = "", this.state = "", this.number = "", this.complement = "", this.main = false]);
+  Address.empty({this.id = "", this.name = "", this.cep = "", this.road = "", this.city = "", this.state = "", this.number = "", this.complement = "", this.main = false});
   
-  static Address fromJson(dynamic json) {
-    return Address.build(
-      id: json["_id"], 
-      name: json["name"], 
-      cep: json["cep"], 
-      road: json["road"], 
-      city: json["city"], 
-      state: json["state"], 
-      number: json["number"], 
-      complement: json["complement"], 
-      main: json["main"]
-    );
+  static Address? fromJson(dynamic json) {
+    try {
+      return Address.build(
+        id: json["_id"] ?? "", 
+        name: json["name"] ?? "", 
+        cep: json["cep"] ?? "", 
+        road: json["road"] ?? "", 
+        city: json["city"] ?? "", 
+        state: json["state"] ?? "", 
+        number: json["number"] ?? "", 
+        complement: json["complement"] ?? "", 
+        main: json["main"]
+      );
+    } catch (e) {
+      return null;
+    }
   }
 
-  static List<Address> fromJsonList(dynamic json) {
-    try { return (json as List).map((address) => Address.fromJson(address)).toList(); } 
+  static List<Address?> fromJsonList(dynamic json) {    
+    try { return ((json as List)[0]["address"] as List).map((address) => Address.fromJson(address)).toList(); } 
     catch (e) { return []; }
   }
 
@@ -37,8 +41,10 @@ class Address {
     return "$road, $number, $city, $state - $cep";
   }
 
-  Map toJson() {
+  Map toJson(String email) {
     return {
+      '_id': id,
+      'email': email,
       'name': name,
       'cep': cep,
       'road': road,

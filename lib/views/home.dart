@@ -15,6 +15,7 @@ import 'package:liber/services/solicitation_service.dart';
 import 'package:liber/services/user_service.dart';
 import 'package:liber/views/login.dart';
 import 'package:liber/views/subviews/books.dart';
+import 'package:liber/views/subviews/create_ad.dart';
 import 'package:liber/views/subviews/edit_account.dart';
 import 'package:liber/views/subviews/edit_account_details.dart';
 import 'package:liber/views/subviews/library.dart';
@@ -53,7 +54,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         case ScreenIndex.editAddressDetails: screen = EditAccountDetails(widget.userEmail, editAddresses: true); break;
         case ScreenIndex.editPaymentDetails: screen = EditAccountDetails(widget.userEmail, editCards: true); break;
         case ScreenIndex.library: screen = Library(widget.userEmail, adsMade: AdService.randomAds(5), purchasesMade: AdService.randomAds(3)); break;
-        case ScreenIndex.createAd: screen = const Text("not implemented"); break;
+        case ScreenIndex.createAd: screen = CreateAd(widget.userEmail); break;
         case ScreenIndex.cart: screen = const Text("not implemented"); break;
         default:
           screen = Text(index.toString());
@@ -85,12 +86,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    index = ScreenIndex.books;
-    screen = const Books();
+    index = ScreenIndex.createAd;
+    screen = CreateAd(widget.userEmail);
     Home.switchScreen = switchScreen;
     Books.menuVisibility = menuVisibility;
     EditAccount.menuVisibility = menuVisibility;
     Library.menuVisibility = menuVisibility;
+    CreateAd.menuVisibility = menuVisibility;
 
     controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
     offset = Tween<Offset>(end: Offset.zero, begin: const Offset(-1.0, 0)).animate(controller);

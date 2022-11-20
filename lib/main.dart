@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:liber/views/home.dart';
 import 'package:liber/views/login.dart';
+import 'package:liber/views/user_interests.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // UserResponse userData = await UserService.get("");
   // runApp(MaterialApp(debugShowCheckedModeBanner: false, home: await entrar("")));
-  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: Home("gamestthony@gmail.com")));
+  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: UserInterests("gamestthony@gmail.com")));
   
   /*
   flutter run -d chrome --web-renderer html

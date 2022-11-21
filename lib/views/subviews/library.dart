@@ -3,13 +3,12 @@ import 'package:liber/model/ad.dart';
 import 'package:liber/model/dto/user_response.dart';
 import 'package:liber/model/user.dart';
 import 'package:liber/services/user_service.dart';
+import 'package:liber/views/home.dart';
 import 'package:liber/widgets/control/duo_selectable_button.dart';
 import 'package:liber/widgets/control/search_expand_menu_bar.dart';
 import 'package:liber/widgets/info/library_details_card.dart';
 
 class Library extends StatefulWidget {
-  static late void Function() menuVisibility;
-
   final List<Ad> adsMade;
   final List<Ad> purchasesMade;
   final String userEmail;
@@ -36,7 +35,7 @@ class _LibraryState extends State<Library> {
           
           return Column(
             children: [
-              SearchExpandMenuBar(() => Library.menuVisibility(), searchController),
+              SearchExpandMenuBar(() => Home.menuVisibility(), searchController),
               const SizedBox(height: 5),
               Expanded(
                 child: Container(

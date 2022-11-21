@@ -6,13 +6,12 @@ import 'package:liber/model/enums/screen_index.dart';
 import 'package:liber/model/user.dart';
 import 'package:liber/model/payment_card.dart';
 import 'package:liber/services/user_service.dart' as user_service;
+import 'package:liber/views/home.dart';
 import 'package:liber/widgets/control/search_expand_menu_bar.dart';
 import 'package:liber/widgets/info/account_info_card.dart';
 import 'package:liber/widgets/input/image_picker.dart';
 
 class EditAccount extends StatefulWidget {
-  static late void Function() menuVisibility;
-
   final String userEmail;
   
   const EditAccount(this.userEmail, {super.key});
@@ -39,7 +38,7 @@ class _EditAccountState extends State<EditAccount> {
           
           return Column(
             children: [
-              SearchExpandMenuBar(() => EditAccount.menuVisibility(), searchController),
+              SearchExpandMenuBar(() => Home.menuVisibility(), searchController),
               const SizedBox(height: 5),
               Expanded(
                 child: Container(
@@ -60,13 +59,13 @@ class _EditAccountState extends State<EditAccount> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(account.name, style: Font.bold()),
-                                      Text(account.accountType.toLowerCase(), style: Font.color(Style.highlightColor).bold())
+                                      Text(account.name ?? "", style: Font.bold()),
+                                      Text((account.accountType ?? "").toLowerCase(), style: Font.color(Style.highlightColor).bold())
                                     ]
                                   ),
                                   Row(
                                     children: [
-                                      Expanded(child: Text(account.email, softWrap: false, overflow: TextOverflow.clip)),
+                                      Expanded(child: Text(account.email ?? "", softWrap: false, overflow: TextOverflow.clip)),
                                       TextButton(onPressed: () => setState(() => edit = true), child: const Icon(Icons.edit, color: Style.highlightColor))
                                     ]
                                   )

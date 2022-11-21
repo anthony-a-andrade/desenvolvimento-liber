@@ -3,6 +3,7 @@ import 'package:liber/model/address.dart';
 import 'package:liber/model/payment_card.dart';
 import 'package:liber/services/user/address_service.dart' as address_service;
 import 'package:liber/services/user/card_service.dart' as card_service;
+import 'package:liber/views/home.dart';
 import 'package:liber/views/subviews/edit_account.dart';
 import 'package:liber/widgets/control/address_block_edit.dart';
 import 'package:liber/widgets/control/payment_card_block_edit.dart';
@@ -105,7 +106,7 @@ class _EditAccountDetailsState extends State<EditAccountDetails> {
 
           return Column(
             children: [
-              SearchExpandMenuBar(() => EditAccount.menuVisibility(), searchController),
+              SearchExpandMenuBar(() => Home.menuVisibility(), searchController),
               const SizedBox(height: 5),
               Expanded(
                 child: Container(

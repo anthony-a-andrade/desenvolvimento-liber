@@ -26,6 +26,7 @@ import 'package:liber/widgets/input/squared_text_button.dart';
 
 class Home extends StatefulWidget {
   static late void Function(ScreenIndex index) switchScreen;
+  static late void Function() menuVisibility;
   
   final String userEmail;
   
@@ -49,7 +50,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       this.index = index;
 
       switch (index) {
-        case ScreenIndex.books: screen = const Books(); break;
+        case ScreenIndex.books: screen = Books(widget.userEmail); break;
         case ScreenIndex.editAccount: screen = EditAccount(widget.userEmail); break;
         case ScreenIndex.editAddressDetails: screen = EditAccountDetails(widget.userEmail, editAddresses: true); break;
         case ScreenIndex.editPaymentDetails: screen = EditAccountDetails(widget.userEmail, editCards: true); break;
@@ -86,13 +87,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    index = ScreenIndex.createAd;
-    screen = CreateAd(widget.userEmail);
+    index = ScreenIndex.books;
+    screen = Books(widget.userEmail);
     Home.switchScreen = switchScreen;
-    Books.menuVisibility = menuVisibility;
-    EditAccount.menuVisibility = menuVisibility;
-    Library.menuVisibility = menuVisibility;
-    CreateAd.menuVisibility = menuVisibility;
+    Home.menuVisibility = menuVisibility;
 
     controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
     offset = Tween<Offset>(end: Offset.zero, begin: const Offset(-1.0, 0)).animate(controller);

@@ -55,7 +55,7 @@ class AdDetailsCard extends StatelessWidget {
                               const Text("Vendido por: "),
                               Expanded(
                                 child: Text(
-                                  anuncio.user.name, 
+                                  anuncio.user.name ?? "", 
                                   style: Font.color(const Color(0xffE265D8)), 
                                   overflow: TextOverflow.ellipsis, 
                                   softWrap: false

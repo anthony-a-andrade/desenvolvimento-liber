@@ -43,7 +43,7 @@ class AccountDetailsCard extends StatelessWidget {
                   )
                 ),
                 const SizedBox(width: 10),
-                Expanded(child: Text(account.name, style: Font.bold()))
+                Expanded(child: Text(account.name ?? "", style: Font.bold()))
               ]
             ),
             const Divider(),

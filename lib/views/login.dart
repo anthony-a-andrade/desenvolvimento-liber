@@ -36,10 +36,10 @@ class _LoginState extends State<Login> {
       // await LoginFileService.save(email, senha);
       if (user.genres.isEmpty) {
         Snackbar.show(context, "Bem vindo ao Liber, ${response.name}!");
-        Navigator.push(context, MaterialPageRoute(builder: (context) => UserInterests(user.email)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => UserInterests(email)));
       } else {
         Snackbar.show(context, "Bem vindo de volta, ${response.name}!");
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Home(user.email)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Home(email)));
         await LoginFileService.save(email, senha);
       }
     } else {

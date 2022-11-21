@@ -5,8 +5,6 @@ import 'package:liber/widgets/input/icon_text_field.dart';
 import 'package:liber/widgets/input/squared_text_button.dart';
 
 class CreateAd extends StatefulWidget {
-  static late void Function() menuVisibility;
-
   final String userEmail;
 
   const CreateAd(this.userEmail, {super.key});

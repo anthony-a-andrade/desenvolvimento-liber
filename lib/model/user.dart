@@ -5,13 +5,13 @@ import 'package:liber/model/genre.dart';
 import 'package:liber/model/payment_card.dart';
 
 class User {
-  String id;
-  String name;
-  String email;
-  String password;
-  bool verified;
-  bool activated;
-  String accountType;
+  String? id;
+  String? name;
+  String? email;
+  String? password;
+  bool? verified;
+  bool? activated;
+  String? accountType;
   List<Genre> genres;
   Address? address;
   PaymentCard? card;
@@ -20,6 +20,8 @@ class User {
   User.build({required this.id, required this.name, required this.email, required this.password, required this.verified, required this.activated, required this.accountType, required this.genres, required this.address, required this.card});
 
   static User fromJson(dynamic json) {
+    try{
+
     return User.build(
       id: json["_id"], 
       name: json["name"], 
@@ -32,10 +34,27 @@ class User {
       address: Address.fromJson(json["address"]), 
       card: PaymentCard.fromJson(json["cards"])
     );
+    } catch (e) {
+      print("error at user");
+      print(json);
+      print(e);
+      return User.build(
+        id: "", 
+        name: "", 
+        email: "", 
+        password: "", 
+        verified: true, 
+        activated: true, 
+        accountType: "", 
+        genres: [], 
+        address: null, 
+        card: null
+      );
+    }
   }
 
   String getImage() {
-    var name = email.runes
+    var name = email!.runes
       .map((e) => String.fromCharCode(e))
       .where((e) => "abcdefghijklmnopqrstuvwxyz0123456789".contains(e.toLowerCase()))
       .join();

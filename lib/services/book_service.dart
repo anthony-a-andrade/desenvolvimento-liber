@@ -1,7 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
+import 'package:liber/config/config.dart';
 import 'package:liber/model/book.dart';
 import 'package:liber/model/genre.dart';
+import 'package:liber/model/user.dart';
+import 'package:liber/services/user_service.dart';
+import 'package:http/http.dart' as http;
 
 class BookService {
   static int amount = 0;
@@ -42,10 +48,10 @@ class BookService {
       authors: randomWords(2, 2, 8, 10), 
       synopsis: randomWords(10, 20, 10, 20).join(" "), 
       publisher: randomWords(1, 3, 5, 15).join(" "), 
-      year: 1900 + _random.nextInt(122), 
+      year: "", 
       location: ["BR", "BR", "US", "US", "ES", "ES"][_random.nextInt(6)], 
       language: ["PT", "EN", "ES"][_random.nextInt(3)], 
-      pageCount: 150 + _random.nextInt(122), 
+      pageCount: "", 
       dimensionHeight: "${10 + _random.nextInt(5)}cm", 
       dimensionWidth: "${7 + _random.nextInt(5)}cm", 
       genre: List<Genre>.generate(3 + _random.nextInt(3), (index) => Genre(index.toString(), randomWord(5, 10), randomWord(5, 10))), 
@@ -58,5 +64,24 @@ class BookService {
     List<Book> items = [];
     for (int i = 0; i < qntExpand; i++) { items.add(randomBook()); }
     return Future.value(items);
+  }
+}
+
+Future<dynamic> getBooks(String email) async {
+  try {
+    var user_ = await get(email);
+    User user = User.fromJson(user_);
+
+    var uri = Uri.http(baseUrl, "/api/app_user/ia/recommendations");
+    var body = json.encode({ '_id': user.id });
+
+    var request = http.Request("GET", uri)
+        ..headers.addAll({ HttpHeaders.contentTypeHeader: "application/json" })
+        ..body = body;
+    http.StreamedResponse response = await request.send();
+
+    return json.decode(await response.stream.bytesToString());
+  } catch (e) {
+    return null;
   }
 }
